@@ -162,6 +162,11 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("✅ Stockfish LLM backend is running!");
+});
+
+
 app.listen(PORT, () => {
   console.log(`🚀 Backend running at http://localhost:${PORT}`);
 });
