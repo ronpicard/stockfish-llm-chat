@@ -4,6 +4,12 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "./App.css";
 
+// ✅ Automatically choose backend URL
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8000/chat" // local dev
+    : "https://stockfish-llm-chat.onrender.com/chat"; // Render backend
+
 function App() {
   const [input, setInput] = useState("");
   const [chat, setChat] = useState([]);
@@ -18,7 +24,7 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/chat", {
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: newChat }),
@@ -47,7 +53,7 @@ function App() {
       <ReactMarkdown
         children={msg.content}
         components={{
-          // ✅ Fix: replace <p> with <div> to avoid invalid nesting
+          // ✅ Fix invalid nesting issue
           p: ({ node, ...props }) => <div {...props} />,
           code({ inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
