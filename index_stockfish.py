@@ -1,12 +1,14 @@
-#### This file is used to parse the Stockfish source code into symbols that can be used to stick in the 
-#### .pkl and .index files. Those files are then used to feed context to the LLM when it responds to questions.
+#### This file is used to parse the Stockfish source code into symbols that can be used
+#### to generate .pkl, .index, and .json files. These files are then used to feed context
+#### to the LLM when it responds to questions.
 
 import os
 import faiss
 import pickle
+import json
 from sentence_transformers import SentenceTransformer
 
-# ✅ Set this to your Stockfish source folder
+# ✅ Path to Stockfish source folder
 CODE_DIR = "Stockfish/src"
 
 CHUNK_SIZE = 300
@@ -41,8 +43,23 @@ dim = embeddings[0].shape[0]
 index = faiss.IndexFlatL2(dim)
 index.add(embeddings)
 
+# Save FAISS index
 faiss.write_index(index, "stockfish.index")
+
+# Save PKL (for backup/debugging)
 with open("stockfish_docs.pkl", "wb") as f:
     pickle.dump((docs, paths), f)
 
-print("✅ Done! Index saved.")
+# Save JSON (for Node.js backend)
+docs_json = []
+for text, emb, path in zip(docs, embeddings, paths):
+    docs_json.append({
+        "text": text,
+        "embedding": emb.tolist(),  # convert NumPy array → JSON serializable
+        "path": path
+    })
+
+with open("stockfish_docs.json", "w", encoding="utf-8") as f:
+    json.dump(docs_json, f)
+
+print("✅ Done! Saved stockfish.index, stockfish_docs.pkl, and stockfish_docs.json")

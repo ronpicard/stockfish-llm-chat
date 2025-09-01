@@ -1,21 +1,21 @@
 services:
   frontend:
     build:
-      context: ./stockfish-llm-chat   # 👈 point to React app
-      dockerfile: ../Dockerfile       # or create a separate lightweight Dockerfile for frontend
+      context: ./stockfish-llm-chat   # frontend code
+      dockerfile: ../.devcontainer/Dockerfile
     ports:
       - "3000:3000"
     working_dir: /app
     volumes:
-      - ./stockfish-llm-chat:/app     # 👈 mount your React app code
+      - ./stockfish-llm-chat:/app
     command: ["npm", "start"]
     depends_on:
       - backend
 
   backend:
     build:
-      context: ./server
-      dockerfile: ../Dockerfile
+      context: ./server               # backend code
+      dockerfile: ../.devcontainer/Dockerfile
     ports:
       - "8000:8000"
     working_dir: /app

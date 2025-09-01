@@ -94,16 +94,26 @@ async function retrieveContext(query, k = 3) {
 }
 
 /**
- * Chat endpoint (with retrieval)
+ * Chat endpoint (with retrieval + inline snippets)
  */
 app.post("/chat", async (req, res) => {
   try {
-    const userMsg = req.body.messages?.[req.body.messages.length - 1]?.content || "";
+    const userMsg =
+      req.body.messages?.[req.body.messages.length - 1]?.content || "";
     const retrieved = await retrieveContext(userMsg, 3);
 
-    const contextBlock = retrieved.length
-      ? `Here are relevant snippets from Stockfish source:\n\n${retrieved.join("\n\n")} \n\nUse them to answer the user.`
-      : "No relevant Stockfish context found, answer from general knowledge.";
+    let contextBlock;
+    if (retrieved.length) {
+      contextBlock =
+        "Here are exact snippets from Stockfish source that may answer the user. " +
+        "If the code looks relevant, show it directly in your answer before explaining:\n\n" +
+        retrieved
+          .map((t, i) => `📄 Snippet ${i + 1}:\n\`\`\`cpp\n${t}\n\`\`\``)
+          .join("\n\n");
+    } else {
+      contextBlock =
+        "No relevant Stockfish context found. Answer from general knowledge.";
+    }
 
     const payload = {
       model: req.body.model || "codestral-latest",
@@ -121,7 +131,6 @@ app.post("/chat", async (req, res) => {
       },
     });
 
-    // 🔑 Send both model output and retrieved snippets back
     res.json({
       retrieved,
       completion: response.data,
