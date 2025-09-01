@@ -1,0 +1,22 @@
+services:
+  frontend:
+    build:
+      context: ./stockfish-llm-chat   # only copy frontend folder
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - ./stockfish-llm-chat:/app
+    command: ["npm", "start"]
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./server               # only copy backend folder
+    ports:
+      - "8000:8000"
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    command: ["node", "server.js"]
