@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "./App.css";
 
 function App() {
@@ -22,21 +25,11 @@ function App() {
       });
 
       const data = await response.json();
-
-      // Extract assistant reply from `completion`
       const reply =
         data?.completion?.choices?.[0]?.message?.content ||
         "⚠️ No reply from model";
 
-      // Optionally include retrieved context for debugging
-      const debugInfo = data?.retrieved?.length
-        ? `\n\n🔎 Context used:\n${data.retrieved.join("\n---\n")}`
-        : "";
-
-      setChat([
-        ...newChat,
-        { role: "assistant", content: reply + debugInfo },
-      ]);
+      setChat([...newChat, { role: "assistant", content: reply }]);
     } catch (err) {
       console.error(err);
       setChat([
@@ -48,21 +41,52 @@ function App() {
     }
   };
 
+  const renderMessage = (msg, idx) => (
+    <div key={idx} className={`msg ${msg.role}`}>
+      <strong>{msg.role === "user" ? "You" : "Bot"}:</strong>
+      <ReactMarkdown
+        children={msg.content}
+        components={{
+          // ✅ Fix: replace <p> with <div> to avoid invalid nesting
+          p: ({ node, ...props }) => <div {...props} />,
+          code({ inline, className, children, ...props }) {
+            const match = /language-(\w+)/.exec(className || "");
+            const codeString = String(children).replace(/\n$/, "");
+
+            if (inline) {
+              return <code {...props}>{children}</code>;
+            } else {
+              return (
+                <div className="code-block">
+                  <SyntaxHighlighter
+                    style={vscDarkPlus}
+                    language={match?.[1] || "cpp"}
+                    PreTag="div"
+                  >
+                    {codeString}
+                  </SyntaxHighlighter>
+                  <button
+                    className="copy-btn"
+                    onClick={() => navigator.clipboard.writeText(codeString)}
+                  >
+                    Copy
+                  </button>
+                </div>
+              );
+            }
+          },
+        }}
+      />
+    </div>
+  );
+
   return (
     <div className="App">
       <header className="App-header">
         <h2>🤖 Stockfish Chatbot (Mistral)</h2>
 
-        <div
-          className="chat-box"
-          style={{ maxWidth: "600px", textAlign: "left", whiteSpace: "pre-wrap" }}
-        >
-          {chat.map((msg, idx) => (
-            <p key={idx}>
-              <strong>{msg.role === "user" ? "You" : "Bot"}:</strong>{" "}
-              {msg.content}
-            </p>
-          ))}
+        <div className="chat-box" style={{ maxWidth: "600px", textAlign: "left" }}>
+          {chat.map(renderMessage)}
         </div>
 
         <div style={{ marginTop: "1rem" }}>

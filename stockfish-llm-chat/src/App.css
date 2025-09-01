@@ -36,3 +36,35 @@
     transform: rotate(360deg);
   }
 }
+
+.code-block {
+  position: relative;
+  margin: 1em 0;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #555;
+}
+
+.msg.user {
+  margin: 0.5em 0;
+  color: #4caf50;
+}
+
+.msg.assistant {
+  margin: 0.5em 0;
+  color: #ddd;
+}
