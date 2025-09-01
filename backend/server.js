@@ -172,5 +172,9 @@ app.get("/", (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`🚀 Backend running at http://localhost:${PORT}`);
+  const host =
+    process.env.NODE_ENV === "production"
+      ? "Render"
+      : `http://localhost:${PORT}`;
+  console.log(`🚀 Backend running on ${host}`);
 });
