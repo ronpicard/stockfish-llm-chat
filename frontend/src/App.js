@@ -5,8 +5,7 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "./App.css";
 
 // ✅ Automatically choose backend URL (remote or local)
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/chat";
-
+const API_URL = process.env.REACT_APP_API_URL;
 
 function App() {
   const [input, setInput] = useState("");
