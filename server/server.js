@@ -77,20 +77,34 @@ function cosineSim(a, b) {
 }
 
 /**
- * Retrieve top-K relevant docs from Stockfish
+ * Retrieve top-K relevant docs from Stockfish (with keyword boosting)
  */
 async function retrieveContext(query, k = 3) {
   if (stockfishDocs.length === 0) return [];
   const queryEmbedding = await getEmbedding(query);
   if (!queryEmbedding) return [];
 
-  const scored = stockfishDocs.map((doc) => ({
-    text: doc.text,
-    score: cosineSim(queryEmbedding, doc.embedding),
-  }));
+  const lowerQuery = query.toLowerCase();
+
+  const scored = stockfishDocs.map((doc) => {
+    let score = cosineSim(queryEmbedding, doc.embedding);
+
+    // 🔎 Keyword boosting: bump if query matches filename or appears inside text
+    if (
+      doc.path.toLowerCase().includes("uci.cpp") &&
+      lowerQuery.includes("uci")
+    ) {
+      score += 0.25;
+    }
+    if (doc.text.toLowerCase().includes("uci::loop")) {
+      score += 0.25;
+    }
+
+    return { ...doc, score };
+  });
 
   scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, k).map((d) => d.text);
+  return scored.slice(0, k);
 }
 
 /**
@@ -108,7 +122,10 @@ app.post("/chat", async (req, res) => {
         "Here are exact snippets from Stockfish source that may answer the user. " +
         "If the code looks relevant, show it directly in your answer before explaining:\n\n" +
         retrieved
-          .map((t, i) => `📄 Snippet ${i + 1}:\n\`\`\`cpp\n${t}\n\`\`\``)
+          .map(
+            (doc, i) =>
+              `📄 Snippet ${i + 1} (from \`${doc.path}:${doc.start_line}-${doc.end_line}\`):\n\n\`\`\`cpp\n${doc.text}\n\`\`\``
+          )
           .join("\n\n");
     } else {
       contextBlock =
@@ -131,8 +148,12 @@ app.post("/chat", async (req, res) => {
       },
     });
 
+    // Return retrieved snippets with code content
     res.json({
-      retrieved,
+      retrieved: retrieved.map(
+        (doc, i) =>
+          `📄 Snippet ${i + 1} (from ${doc.path}:${doc.start_line}-${doc.end_line}):\n\n\`\`\`cpp\n${doc.text}\n\`\`\``
+      ),
       completion: response.data,
     });
   } catch (err) {
@@ -140,7 +161,6 @@ app.post("/chat", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Backend running at http://localhost:${PORT}`);
