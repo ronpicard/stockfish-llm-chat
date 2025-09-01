@@ -1,13 +1,13 @@
 services:
   frontend:
     build:
-      context: ./stockfish-llm-chat   # adjust if your frontend folder has another name
+      context: ./frontend  # adjust if your frontend folder has another name
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     working_dir: /app
     volumes:
-      - ./stockfish-llm-chat:/app
+      - ./frontend:/app
     command: ["npm", "start"]
     depends_on:
       - backend
