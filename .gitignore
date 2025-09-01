@@ -16,3 +16,4 @@ __pycache__/
 
 # macOS system files
 *.DS_Store
+.devcontainer/devcontainer.json
