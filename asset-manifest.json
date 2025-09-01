@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/stockfish-llm-chat/static/css/main.d2faf7d8.css",
+    "main.js": "/stockfish-llm-chat/static/js/main.11591a97.js",
+    "static/js/453.54292a4b.chunk.js": "/stockfish-llm-chat/static/js/453.54292a4b.chunk.js",
+    "index.html": "/stockfish-llm-chat/index.html",
+    "main.d2faf7d8.css.map": "/stockfish-llm-chat/static/css/main.d2faf7d8.css.map",
+    "main.11591a97.js.map": "/stockfish-llm-chat/static/js/main.11591a97.js.map",
+    "453.54292a4b.chunk.js.map": "/stockfish-llm-chat/static/js/453.54292a4b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d2faf7d8.css",
+    "static/js/main.11591a97.js"
+  ]
+}
