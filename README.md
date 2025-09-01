@@ -1,1 +1,1 @@
-# stockfish-llm-rag
+First prototype working with mistral AI. 
