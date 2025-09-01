@@ -11,8 +11,9 @@ from sentence_transformers import SentenceTransformer
 # ✅ Path to Stockfish source folder
 CODE_DIR = "Stockfish/src"
 
-CHUNK_SIZE = 300
-CHUNK_OVERLAP = 50
+CHUNK_SIZE = 800   # keep functions together
+CHUNK_OVERLAP = 100
+
 
 def load_code_files():
     texts = []
