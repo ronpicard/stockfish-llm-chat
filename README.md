@@ -4,7 +4,7 @@
 
 # ♟️ Stockfish LLM Chatbot  
 
-This is an interactive LLM chatbot that uses **Mistral AI** models with retrieval-augmented generation (RAG) from the **Stockfish** chess engine source code. You can ask it direct quetsions about the stockfish source code as it is fed direct context from the source files. Frontend is built in **React**, backend in **Express/Node.js**, and deployed with **Render (backend)** + **GitHub Pages (frontend)**.  
+This is an interactive LLM chatbot that uses **Mistral AI** models with retrieval-augmented generation (RAG) from the **Stockfish** chess engine source code. You can ask it direct questions about the stockfish source code as it is fed direct context from the source files. Frontend is built in **React**, backend in **Express/Node.js**, and deployed with **Render (backend)** + **GitHub Pages (frontend)**.  
 
 ---
 
@@ -13,12 +13,12 @@ This is an interactive LLM chatbot that uses **Mistral AI** models with retrieva
 - Retrieval of Stockfish source snippets via embeddings  
 - Chat powered by [Mistral API](https://docs.mistral.ai/)  
 - Supports both **local development** and **production** (Render + GitHub Pages)  
-- Code snippets are syntax highlighted with copy button  
+- Code snippets are syntax-highlighted with a copy button  
 - CORS configured for local + GitHub Pages frontend  
 
 ---
 
-## 🗂 Project Structure  
+## 🗂 General Project Structure  
 stockfish-llm-chat/
 ├── backend/ # Express.js server
 │ ├── server.js
@@ -34,7 +34,10 @@ stockfish-llm-chat/
 │ │ ├── App.css
 │ │ └── ...
 │ └── package.json
-│
+│-- stockfish_docs.json
+│── stockfish_docs.pkl
+│── stockfish.index
+|-- index_stockfish.py
 └── README.md
 
 ---
@@ -75,7 +78,10 @@ REACT_APP_API_URL=http://localhost:8000/chat
 REACT_APP_API_URL=https://stockfish-llm-chat.onrender.com/chat
 
 ## Run locally (for testing)
-npm start
+docker-compose up --build
+docker-compose down
+
+(or use npm start in both the front end and back end)
 
 Frontend runs at 👉 http://localhost:3000
 
