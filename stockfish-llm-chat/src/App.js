@@ -23,11 +23,20 @@ function App() {
 
       const data = await response.json();
 
-      // Extract assistant reply
+      // Extract assistant reply from `completion`
       const reply =
-        data?.choices?.[0]?.message?.content || "⚠️ No reply from model";
+        data?.completion?.choices?.[0]?.message?.content ||
+        "⚠️ No reply from model";
 
-      setChat([...newChat, { role: "assistant", content: reply }]);
+      // Optionally include retrieved context for debugging
+      const debugInfo = data?.retrieved?.length
+        ? `\n\n🔎 Context used:\n${data.retrieved.join("\n---\n")}`
+        : "";
+
+      setChat([
+        ...newChat,
+        { role: "assistant", content: reply + debugInfo },
+      ]);
     } catch (err) {
       console.error(err);
       setChat([
@@ -44,7 +53,10 @@ function App() {
       <header className="App-header">
         <h2>🤖 Stockfish Chatbot (Mistral)</h2>
 
-        <div className="chat-box" style={{ maxWidth: "600px", textAlign: "left" }}>
+        <div
+          className="chat-box"
+          style={{ maxWidth: "600px", textAlign: "left", whiteSpace: "pre-wrap" }}
+        >
           {chat.map((msg, idx) => (
             <p key={idx}>
               <strong>{msg.role === "user" ? "You" : "Bot"}:</strong>{" "}
