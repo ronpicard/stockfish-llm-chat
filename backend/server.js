@@ -11,11 +11,15 @@ const app = express();
 // Enable CORS for React frontend
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",            // local dev
+      "https://ronpicard.github.io"       // GitHub Pages
+    ],
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 app.use(bodyParser.json());
 
